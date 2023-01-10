@@ -33,6 +33,7 @@ public class NwDiagExporter implements DiagramExporter {
         writer.writeLine(
                 format("group %s {", deploymentNode.getName())
         );
+        writer.writeLine(format("description = \"%s\"", deploymentNode.getName()));
         writer.indent();
     }
 
