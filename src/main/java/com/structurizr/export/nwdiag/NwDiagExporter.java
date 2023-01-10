@@ -109,6 +109,7 @@ public class NwDiagExporter implements DiagramExporter {
     }
 
     protected void writeFooter(View view, IndentingWriter writer) {
+        tagsList.remove("Container Instance");
         for (Map.Entry<String, ArrayList<String>> tags: tagsList.entrySet()) {
             writer.writeLine(format("network %s {", tags.getKey()));
 
