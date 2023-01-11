@@ -28,9 +28,8 @@ public class NwDiagExporter implements DiagramExporter {
 
 
     private String chooseColor() {
-        int rnd = new Random().nextInt(plantUMLColors.size());
-        String color = plantUMLColors.get(rnd);
-        plantUMLColors.remove(rnd);
+        String color = plantUMLColors.get(0);
+        plantUMLColors.remove(0);
         return color;
     }
 
