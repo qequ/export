@@ -13,15 +13,31 @@ import com.structurizr.view.ElementView;
 import com.structurizr.view.View;
 
 import java.util.*;
+import java.util.Arrays;
 
 import static java.lang.String.format;
 
 public class NwDiagExporter implements DiagramExporter {
+    private List<String> plantUMLColors = new LinkedList<String>(Arrays.asList("Red", "Peru", "White", "Crimson", "Gold", "Violet", "Yellow", "White", "Chocolate",
+            "Blue", "Coral", "Tomato", "Lime", "Cyan", "Indigo", "Ivory", "LimeGreen", "Navy", "Olive"));
+
+    private HashMap<String, String> softSysColors = new HashMap<String, String>();
     private Object frame = null;
 
     private HashMap<String, ArrayList<String>> tagsList = new HashMap<String, ArrayList<String>>();
 
 
+    private String chooseColor() {
+        int rnd = new Random().nextInt(plantUMLColors.size());
+        String color = plantUMLColors.get(rnd);
+        plantUMLColors.remove(rnd);
+        return color;
+    }
+
+    private String getSoftSysColor(String name) {
+        softSysColors.computeIfAbsent(name, k -> chooseColor());
+        return softSysColors.get(name);
+    }
     private void saveTags(Set<String> containerInstancetags, String contInstanceName) {
         for(String s: containerInstancetags) {
             tagsList.computeIfAbsent(s, k -> new ArrayList<String>());
@@ -47,12 +63,13 @@ public class NwDiagExporter implements DiagramExporter {
 
         if (element instanceof ContainerInstance) {
             String properName = ((ContainerInstance) element).getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
-            System.out.println(properName);
-            //writer.writeLine(format("%s", idContInstance));
-            writer.writeLine(properName);
+            String[] parts =  properName.split("\\.");
+            String color = getSoftSysColor(parts[0]);
+            String containerName = parts[1];
+            writer.writeLine(format("%s[color = \"%s\"]", containerName, color));
 
             Set<String> tags = element.getTagsAsSet();
-            saveTags(tags, properName);
+            saveTags(tags, containerName);
 
         }
     }
