@@ -77,6 +77,15 @@ public class NwDiagExporter implements DiagramExporter {
     }
 
 
+    protected void saveContainerInstanceTags(ContainerInstance contInstance) {
+        String properName = contInstance.getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
+        String[] parts = properName.split("\\.");
+        String containerName = parts[1];
+
+        Set<String> tags = contInstance.getTagsAsSet();
+        saveTags(tags, containerName);
+    }
+
     protected void writeElement(View view, Element element, IndentingWriter writer) {
 
         if (element instanceof ContainerInstance) {
@@ -97,14 +106,21 @@ public class NwDiagExporter implements DiagramExporter {
 
             writer.writeLine(formatString);
 
-            Set<String> tags = element.getTagsAsSet();
-            saveTags(tags, containerName);
-
         }
     }
 
 
     private void write(DeploymentView view, DeploymentNode deploymentNode, IndentingWriter writer) {
+        List<ContainerInstance> containerInstances = new ArrayList<>(deploymentNode.getContainerInstances());
+        containerInstances.sort(Comparator.comparing(ContainerInstance::getName));
+        for (ContainerInstance containerInstance : containerInstances) {
+            if (view.isElementInView(containerInstance)) {
+                saveContainerInstanceTags(containerInstance);
+            }
+        }
+        writeNetworks(view, writer);
+
+
         startDeploymentNodeBoundary(view, deploymentNode, writer);
 
         List<DeploymentNode> children = new ArrayList<>(deploymentNode.getChildren());
@@ -132,8 +148,6 @@ public class NwDiagExporter implements DiagramExporter {
             }
         }
 
-        List<ContainerInstance> containerInstances = new ArrayList<>(deploymentNode.getContainerInstances());
-        containerInstances.sort(Comparator.comparing(ContainerInstance::getName));
         for (ContainerInstance containerInstance : containerInstances) {
             if (view.isElementInView(containerInstance)) {
                 writeElement(view, containerInstance, writer);
@@ -143,6 +157,18 @@ public class NwDiagExporter implements DiagramExporter {
         endDeploymentNodeBoundary(view, writer);
     }
 
+    protected void writeNetworks(View view, IndentingWriter writer) {
+        tagsList.remove("Container Instance");
+        for (Map.Entry<String, ArrayList<String>> tags: tagsList.entrySet()) {
+            writer.writeLine(format("network %s {", tags.getKey()));
+
+            for (String container: tags.getValue()) {
+                writer.writeLine(format("%s;", container));
+            }
+            writer.writeLine("}");
+
+        }
+    }
 
     protected void writeHeader(View view, IndentingWriter writer) {
         String viewTitle = view.getTitle();
@@ -156,17 +182,6 @@ public class NwDiagExporter implements DiagramExporter {
     }
 
     protected void writeFooter(View view, IndentingWriter writer) {
-        tagsList.remove("Container Instance");
-        for (Map.Entry<String, ArrayList<String>> tags: tagsList.entrySet()) {
-            writer.writeLine(format("network %s {", tags.getKey()));
-
-            for (String container: tags.getValue()) {
-                writer.writeLine(format("%s;", container));
-            }
-            writer.writeLine("}");
-
-        }
-
         writer.writeLine("}");
         writer.writeLine();
         writer.writeLine("@enduml");
