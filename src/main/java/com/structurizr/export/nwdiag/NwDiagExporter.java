@@ -184,6 +184,20 @@ public class NwDiagExporter implements DiagramExporter {
         writer.writeLine("@startuml " + viewTitle);
         writer.writeLine();
 
+        writer.writeLine("<style>");
+        writer.writeLine("nwdiagDiagram {");
+        writer.writeLine("  group {");
+        writer.writeLine("    BackGroundColor cadetblue" );
+        writer.writeLine("    #LineColor black" );
+        writer.writeLine("    #LineThickness 2.0" );
+        writer.writeLine("    #FontSize 11" );
+        writer.writeLine("    FontStyle bold" );
+        writer.writeLine("    #Margin 5" );
+        writer.writeLine("    #Padding 5" );
+        writer.writeLine("  }" );
+        writer.writeLine("}" );
+        writer.writeLine("</style>");
+
         writer.writeLine("nwdiag {");
     }
 
