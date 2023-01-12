@@ -1,0 +1,142 @@
+{
+  "id" : 19233040,
+  "name" : "Test deployment Node nwdiag exporter",
+  "description" : "Description",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlICJUZXN0IGRlcGxveW1lbnQgTm9kZSBud2RpYWcgZXhwb3J0ZXIiIHsKCiAgICAhaWRlbnRpZmllcnMgaGllcmFyY2hpY2FsCgoKICAgIG1vZGVsIHsKCiAgICAgICAgc3MxID0gc29mdHdhcmVzeXN0ZW0gIlNvZnR3YXJlIFN5c3RlbTEiICJTb2Z0IFN5cyAxIiB7CiAgICAgICAgICAgIGNjMTEgPSBDb250YWluZXIgIkNvbnRhaW5lciAxMSIgIkNvbnQgMTEiIHsKICAgICAgICAgICAgICAgIGNvbXAxMTEgPSBjb21wb25lbnQgIkNvbXBvbmVudCAxMTEiICJDb21wIDExMSIKICAgICAgICAgICAgICAgIGNvbXAxMTIgPSBjb21wb25lbnQgIkNvbXBvbmVudCAxMTIiICJDb21wIDExMiIKCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGNjMTIgPSBDb250YWluZXIgIkNvbnRhaW5lciAxMiIgIkNvbnQgMTIiCgogICAgICAgIH0KCiAgICAgICAgc3MyID0gc29mdHdhcmVzeXN0ZW0gIlNvZnR3YXJlIFN5c3RlbTIiICJTb2Z0IFN5cyAyIiB7CiAgICAgICAgICAgIGNjMjEgPSBDb250YWluZXIgIkNvbnRhaW5lciAyMSIgIkNvbnQgMjEiCgogICAgICAgICAgICBjYzIyID0gQ29udGFpbmVyICJDb250YWluZXIgMjIiICJDb250IDIyIgoKICAgICAgICB9CgoKICAgICAgICBkZXBsb3ltZW50RW52aXJvbm1lbnQgb25lTm9kZSB7CiAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJVbk5vZGUiIHsKICAgICAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHNzMS5jYzExICIiICJhbmV0IgogICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3MxLmNjMTIgIiIgImJuZXQiCgogICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3MyLmNjMjEgIiIgImFuZXQiCiAgICAgICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBzczIuY2MyMiAiIiAiYm5ldCIKCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgfQoKICAgIHZpZXdzIHsKICAgICAgICBkZXBsb3ltZW50ICogIm9uZU5vZGUiIHsKICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICBud2RpYWcuaW5jbHVkZV9jb21wb25lbnRzIHRydWUKCiAgICAgICAgICAgIH0KCgogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICB9Cn0K"
+  },
+  "configuration" : { },
+  "model" : {
+    "softwareSystems" : [ {
+      "id" : "1",
+      "tags" : "Element,Software System",
+      "name" : "Software System1",
+      "description" : "Soft Sys 1",
+      "location" : "Unspecified",
+      "containers" : [ {
+        "id" : "2",
+        "tags" : "Element,Container",
+        "name" : "Container 11",
+        "description" : "Cont 11",
+        "components" : [ {
+          "id" : "4",
+          "tags" : "Element,Component",
+          "name" : "Component 112",
+          "description" : "Comp 112",
+          "size" : 0
+        }, {
+          "id" : "3",
+          "tags" : "Element,Component",
+          "name" : "Component 111",
+          "description" : "Comp 111",
+          "size" : 0
+        } ]
+      }, {
+        "id" : "5",
+        "tags" : "Element,Container",
+        "name" : "Container 12",
+        "description" : "Cont 12"
+      } ],
+      "documentation" : { }
+    }, {
+      "id" : "6",
+      "tags" : "Element,Software System",
+      "name" : "Software System2",
+      "description" : "Soft Sys 2",
+      "location" : "Unspecified",
+      "containers" : [ {
+        "id" : "7",
+        "tags" : "Element,Container",
+        "name" : "Container 21",
+        "description" : "Cont 21"
+      }, {
+        "id" : "8",
+        "tags" : "Element,Container",
+        "name" : "Container 22",
+        "description" : "Cont 22"
+      } ],
+      "documentation" : { }
+    } ],
+    "deploymentNodes" : [ {
+      "id" : "9",
+      "tags" : "Element,Deployment Node",
+      "name" : "UnNode",
+      "environment" : "oneNode",
+      "instances" : 1,
+      "containerInstances" : [ {
+        "id" : "13",
+        "tags" : "Container Instance,bnet",
+        "environment" : "oneNode",
+        "deploymentGroups" : [ "Default" ],
+        "instanceId" : 1,
+        "containerId" : "8"
+      }, {
+        "id" : "11",
+        "tags" : "Container Instance,bnet",
+        "environment" : "oneNode",
+        "deploymentGroups" : [ "Default" ],
+        "instanceId" : 1,
+        "containerId" : "5"
+      }, {
+        "id" : "10",
+        "tags" : "Container Instance,anet",
+        "environment" : "oneNode",
+        "deploymentGroups" : [ "Default" ],
+        "instanceId" : 1,
+        "containerId" : "2"
+      }, {
+        "id" : "12",
+        "tags" : "Container Instance,anet",
+        "environment" : "oneNode",
+        "deploymentGroups" : [ "Default" ],
+        "instanceId" : 1,
+        "containerId" : "7"
+      } ]
+    } ]
+  },
+  "documentation" : { },
+  "views" : {
+    "deploymentViews" : [ {
+      "key" : "oneNode-Deployment",
+      "order" : 1,
+      "automaticLayout" : {
+        "implementation" : "Graphviz",
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 300,
+        "nodeSeparation" : 300,
+        "edgeSeparation" : 0,
+        "vertices" : false
+      },
+      "properties" : {
+        "nwdiag.include_components" : "true"
+      },
+      "environment" : "oneNode",
+      "elements" : [ {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      } ]
+    } ],
+    "configuration" : {
+      "branding" : { },
+      "styles" : { },
+      "terminology" : { }
+    }
+  }
+}
