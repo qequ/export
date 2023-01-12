@@ -24,28 +24,28 @@ public class NwDiagExporterTests extends AbstractExporterTests {
 
         for (Diagram d: diagrams) {
             assertEquals(
-                    "@startuml Deployment - oneNode\n" +
-                            "\n" +
-                            "nwdiag {\n" +
-                            "group UnNode {\n" +
-                            "description = \"UnNode\"\n" +
-                            "  Container_11[color = \"Red\"]\n" +
-                            "  Container_12[color = \"Red\"]\n" +
-                            "  Container_21[color = \"Peru\"]\n" +
-                            "  Container_22[color = \"Peru\"]\n" +
-                            "}\n" +
-                            "\n" +
-                            "network anet {\n" +
-                            "Container_11;\n" +
-                            "Container_21;\n" +
-                            "}\n" +
-                            "network bnet {\n" +
-                            "Container_12;\n" +
-                            "Container_22;\n" +
-                            "}\n" +
-                            "}\n" +
-                            "\n" +
-                            "@enduml",
+            "@startuml Deployment - oneNode\n" +
+                    "\n" +
+                    "nwdiag {\n" +
+                    "network anet {\n" +
+                    "Container_11;\n" +
+                    "Container_21;\n" +
+                    "}\n" +
+                    "network bnet {\n" +
+                    "Container_12;\n" +
+                    "Container_22;\n" +
+                    "}\n" +
+                    "group UnNode {\n" +
+                    "description = \"UnNode\"\n" +
+                    "  Container_11[color = \"Red\"]\n" +
+                    "  Container_12[color = \"Red\"]\n" +
+                    "  Container_21[color = \"Peru\"]\n" +
+                    "  Container_22[color = \"Peru\"]\n" +
+                    "}\n" +
+                    "\n" +
+                    "}\n" +
+                    "\n" +
+                    "@enduml",
                     d.getDefinition()
             );
 
