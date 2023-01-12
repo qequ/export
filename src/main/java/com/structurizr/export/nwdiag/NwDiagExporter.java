@@ -67,12 +67,10 @@ public class NwDiagExporter implements DiagramExporter {
             return  "";
         }
 
-        String compNames = " description = \"";
+        String compNames = "\n\n";
         for (Component comp: componentSet) {
             compNames = compNames.concat(format("%s\n", comp.getName()));
         }
-        compNames = compNames.concat("\"");
-
         return compNames;
     }
 
@@ -86,6 +84,14 @@ public class NwDiagExporter implements DiagramExporter {
         saveTags(tags, containerName);
     }
 
+    protected String createDescriptionString(String containerName, String compsNames) {
+        if (compsNames == "") {
+            return "";
+        }
+        return format(", description=\"<b>%s</b>%s\"", containerName, compsNames);
+
+    }
+
     protected void writeElement(View view, Element element, IndentingWriter writer) {
 
         if (element instanceof ContainerInstance) {
@@ -97,7 +103,7 @@ public class NwDiagExporter implements DiagramExporter {
             String formatString = "";
             if (addContainerComponents) {
                 String compsNames = getComponentNames(((ContainerInstance) element).getContainer().getComponents());
-                formatString = format("%s[color = \"%s\"%s]", containerName, color, compsNames);
+                formatString = format("%s[color = \"%s\"%s]", containerName, color, createDescriptionString(containerName, compsNames));
             }
             else {
                 formatString = format("%s[color = \"%s\"]", containerName, color);
