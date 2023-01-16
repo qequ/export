@@ -84,13 +84,6 @@ public class NwDiagExporter implements DiagramExporter {
         saveTags(tags, containerName);
     }
 
-    protected String createDescriptionString(String containerName, String compsNames) {
-        if (compsNames == "") {
-            return "";
-        }
-        return format(", description=\"<b>%s</b>%s\"", containerName, compsNames);
-
-    }
 
     protected void writeElement(View view, Element element, IndentingWriter writer) {
 
@@ -100,16 +93,12 @@ public class NwDiagExporter implements DiagramExporter {
             String color = getSoftSysColor(parts[0]);
             String containerName = parts[1];
 
-            String formatString = "";
+            String compsNames = "";
             if (addContainerComponents) {
-                String compsNames = getComponentNames(((ContainerInstance) element).getContainer().getComponents());
-                formatString = format("%s[color = \"%s\"%s]", containerName, color, createDescriptionString(containerName, compsNames));
-            }
-            else {
-                formatString = format("%s[color = \"%s\"]", containerName, color);
-
+                compsNames = getComponentNames(((ContainerInstance) element).getContainer().getComponents());
             }
 
+            String formatString = format("%s[color = \"%s\", description=\"<b>%s</b>%s\"]", containerName, color, containerName, compsNames);
             writer.writeLine(formatString);
 
         }
