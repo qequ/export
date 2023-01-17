@@ -24,7 +24,7 @@ public class NwDiagExporterTests extends AbstractExporterTests {
 
         for (Diagram d: diagrams) {
             assertEquals(
-                    "@startuml Deployment - oneNode\n" +
+                    "@startuml\n" +
                             "\n" +
                             "<style>\n" +
                             "nwdiagDiagram {\n" +
@@ -79,7 +79,7 @@ public class NwDiagExporterTests extends AbstractExporterTests {
 
         for (Diagram d: diagrams) {
             assertEquals(
-                    "@startuml Deployment - oneNode\n" +
+                    "@startuml\n" +
                             "\n" +
                             "<style>\n" +
                             "nwdiagDiagram {\n" +

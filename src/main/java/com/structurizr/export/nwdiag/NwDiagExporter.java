@@ -178,11 +178,7 @@ public class NwDiagExporter implements DiagramExporter {
     }
 
     protected void writeHeader(View view, IndentingWriter writer) {
-        String viewTitle = view.getTitle();
-        if (StringUtils.isNullOrEmpty(viewTitle)) {
-            viewTitle = view.getName();
-        }
-        writer.writeLine("@startuml " + viewTitle);
+        writer.writeLine("@startuml" );
         writer.writeLine();
 
         writer.writeLine("<style>");
