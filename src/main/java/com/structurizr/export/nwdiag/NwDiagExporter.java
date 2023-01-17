@@ -21,6 +21,9 @@ public class NwDiagExporter implements DiagramExporter {
     private List<String> plantUMLColors = new LinkedList<String>(Arrays.asList("Red", "Peru", "White", "Crimson", "Gold", "Violet", "Yellow", "White", "Chocolate",
             "Blue", "Coral", "Tomato", "Lime", "Cyan", "Indigo", "Ivory", "LimeGreen", "Navy", "Olive"));
 
+    private HashMap<String, Integer> countContainerNames = new HashMap<String, Integer>();
+    private HashMap<String, Integer> countNetworkContainerNames = new HashMap<String, Integer>();
+
     private HashMap<String, String> softSysColors = new HashMap<String, String>();
     private Object frame = null;
     private boolean addContainerComponents = false;
@@ -79,11 +82,20 @@ public class NwDiagExporter implements DiagramExporter {
         String properName = contInstance.getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
         String[] parts = properName.split("\\.");
         String containerName = parts[1];
-
+        String varName = checkRepeatedContainers(containerName, countNetworkContainerNames);
         Set<String> tags = contInstance.getTagsAsSet();
-        saveTags(tags, containerName);
+        saveTags(tags, varName);
     }
 
+
+    protected String checkRepeatedContainers(String containerName, HashMap<String, Integer> counter) {
+
+        counter.computeIfAbsent(containerName, k -> 0);
+        Integer repetitions = counter.get(containerName) + 1;
+        counter.put(containerName, repetitions);
+
+        return containerName.concat(format("_%s", repetitions.toString()));
+    }
 
     protected void writeElement(View view, Element element, IndentingWriter writer) {
 
@@ -92,13 +104,13 @@ public class NwDiagExporter implements DiagramExporter {
             String[] parts =  properName.split("\\.");
             String color = getSoftSysColor(parts[0]);
             String containerName = parts[1];
-
+            String containerVarName = checkRepeatedContainers(containerName, countContainerNames);
             String compsNames = "";
             if (addContainerComponents) {
                 compsNames = getComponentNames(((ContainerInstance) element).getContainer().getComponents());
             }
 
-            String formatString = format("%s[color = \"%s\", description=\"<b>%s</b>%s\"]", containerName, color, containerName, compsNames);
+            String formatString = format("%s[color = \"%s\", description=\"<b>%s</b>%s\"]", containerVarName, color, containerName, compsNames);
             writer.writeLine(formatString);
 
         }
