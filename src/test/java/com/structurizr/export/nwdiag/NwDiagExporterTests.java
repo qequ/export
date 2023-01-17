@@ -41,19 +41,19 @@ public class NwDiagExporterTests extends AbstractExporterTests {
                             "</style>\n" +
                             "nwdiag {\n" +
                             "network anet {\n" +
-                            "Container_11;\n" +
-                            "Container_21;\n" +
+                            "Container_11_1;\n" +
+                            "Container_21_1;\n" +
                             "}\n" +
                             "network bnet {\n" +
-                            "Container_12;\n" +
-                            "Container_22;\n" +
+                            "Container_12_1;\n" +
+                            "Container_22_1;\n" +
                             "}\n" +
                             "group UnNode {\n" +
                             "description = \"UnNode\"\n" +
-                            "  Container_11[color = \"Red\", description=\"<b>Container_11</b>\"]\n" +
-                            "  Container_12[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
-                            "  Container_21[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +
-                            "  Container_22[color = \"Peru\", description=\"<b>Container_22</b>\"]\n" +
+                            "  Container_11_1[color = \"Red\", description=\"<b>Container_11</b>\"]\n" +
+                            "  Container_12_1[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
+                            "  Container_21_1[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +
+                            "  Container_22_1[color = \"Peru\", description=\"<b>Container_22</b>\"]\n" +
                             "}\n" +
                             "\n" +
                             "}\n" +
@@ -96,19 +96,19 @@ public class NwDiagExporterTests extends AbstractExporterTests {
                             "</style>\n" +
                             "nwdiag {\n" +
                             "network anet {\n" +
-                            "Container_11;\n" +
-                            "Container_21;\n" +
+                            "Container_11_1;\n" +
+                            "Container_21_1;\n" +
                             "}\n" +
                             "network bnet {\n" +
-                            "Container_12;\n" +
-                            "Container_22;\n" +
+                            "Container_12_1;\n" +
+                            "Container_22_1;\n" +
                             "}\n" +
                             "group UnNode {\n" +
                             "description = \"UnNode\"\n" +
-                            "  Container_11[color = \"Red\", description=\"<b>Container_11</b>\\n\\nComponent 112\\nComponent 111\\n\"]\n" +
-                            "  Container_12[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
-                            "  Container_21[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +
-                            "  Container_22[color = \"Peru\", description=\"<b>Container_22</b>\"]\n" +
+                            "  Container_11_1[color = \"Red\", description=\"<b>Container_11</b>\\n\\nComponent 112\\nComponent 111\\n\"]\n" +
+                            "  Container_12_1[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
+                            "  Container_21_1[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +
+                            "  Container_22_1[color = \"Peru\", description=\"<b>Container_22</b>\"]\n" +
                             "}\n" +
                             "\n" +
                             "}\n" +
