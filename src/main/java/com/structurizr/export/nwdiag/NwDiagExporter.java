@@ -21,17 +21,15 @@ public class NwDiagExporter implements DiagramExporter {
     private List<String> plantUMLColors = new LinkedList<String>(Arrays.asList("Red", "Peru", "White", "Crimson", "Gold", "Violet", "Yellow", "White", "Chocolate",
             "Blue", "Coral", "Tomato", "Lime", "Cyan", "Indigo", "Ivory", "LimeGreen", "Navy", "Olive"));
 
-    private HashMap<String, Integer> countContainerNames = new HashMap<String, Integer>();
-    private HashMap<String, Integer> countNetworkContainerNames = new HashMap<String, Integer>();
-
     private HashMap<String, String> softSysColors = new HashMap<String, String>();
     private Object frame = null;
     private boolean addContainerComponents = false;
 
-    private HashMap<String, ArrayList<String>> tagsList = new HashMap<String, ArrayList<String>>();
-
 
     private String chooseColor() {
+        if (plantUMLColors.size() == 0) {
+            return "White";
+        }
         String color = plantUMLColors.get(0);
         plantUMLColors.remove(0);
         return color;
@@ -41,14 +39,15 @@ public class NwDiagExporter implements DiagramExporter {
         softSysColors.computeIfAbsent(name, k -> chooseColor());
         return softSysColors.get(name);
     }
-    private void saveTags(Set<String> containerInstancetags, String contInstanceName) {
-        for(String s: containerInstancetags) {
+
+    private void saveTags(Set<String> containerInstancetags, String contInstanceName, HashMap<String, ArrayList<String>> tagsList) {
+        for (String s : containerInstancetags) {
             tagsList.computeIfAbsent(s, k -> new ArrayList<String>());
             tagsList.get(s).add(contInstanceName);
         }
     }
 
-    protected void startDeploymentNodeBoundary(DeploymentView view, DeploymentNode deploymentNode, IndentingWriter writer) {
+    protected void startDeploymentNodeBoundary(DeploymentView view, DeploymentNodeDecorator deploymentNode, IndentingWriter writer) {
         addContainerComponents = Boolean.parseBoolean(view.getProperties().getOrDefault("nwdiag.include_components", "false"));
 
         writer.writeLine(
@@ -66,25 +65,17 @@ public class NwDiagExporter implements DiagramExporter {
     }
 
     protected String getComponentNames(Set<Component> componentSet) {
-        if (componentSet.size() == 0) {
-            return  "";
+        List<Component> components = new ArrayList<>(componentSet);
+        components.sort(Comparator.comparing(Component::getName));
+        if (components.size() == 0) {
+            return "";
         }
 
         String compNames = "\n\n";
-        for (Component comp: componentSet) {
+        for (Component comp : components) {
             compNames = compNames.concat(format("%s\n", comp.getName()));
         }
         return compNames;
-    }
-
-
-    protected void saveContainerInstanceTags(ContainerInstance contInstance) {
-        String properName = contInstance.getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
-        String[] parts = properName.split("\\.");
-        String containerName = parts[1];
-        String varName = checkRepeatedContainers(containerName, countNetworkContainerNames);
-        Set<String> tags = contInstance.getTagsAsSet();
-        saveTags(tags, varName);
     }
 
 
@@ -97,74 +88,46 @@ public class NwDiagExporter implements DiagramExporter {
         return containerName.concat(format("_%s", repetitions.toString()));
     }
 
-    protected void writeElement(View view, Element element, IndentingWriter writer) {
 
-        if (element instanceof ContainerInstance) {
-            String properName = ((ContainerInstance) element).getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
-            String[] parts =  properName.split("\\.");
-            String color = getSoftSysColor(parts[0]);
-            String containerName = parts[1];
-            String containerVarName = checkRepeatedContainers(containerName, countContainerNames);
-            String compsNames = "";
-            if (addContainerComponents) {
-                compsNames = getComponentNames(((ContainerInstance) element).getContainer().getComponents());
-            }
+    protected void writeContainerInstance(View view, ContainerInstanceDecorator decorator, IndentingWriter writer) {
+        String containerVarName  = decorator.getVarName();
+        String containerName = decorator.getName();
+        String color =  getSoftSysColor(decorator.getSoftwareSystemFather());
 
-            String formatString = format("%s[color = \"%s\", description=\"<b>%s</b>%s\"]", containerVarName, color, containerName, compsNames);
-            writer.writeLine(formatString);
-
+        String compsNames = "";
+        if (addContainerComponents){
+            compsNames = getComponentNames(decorator.getComponents());
         }
+
+        String formatString = format("%s[color = \"%s\", description=\"<b>%s</b>%s\"]", containerVarName, color, containerName, compsNames);
+        writer.writeLine(formatString);
+
+
     }
 
+    private void write(DeploymentView view, DeploymentNodeDecorator deploymentNodeDecorator, IndentingWriter writer) {
+        startDeploymentNodeBoundary(view, deploymentNodeDecorator, writer);
 
-    private void write(DeploymentView view, DeploymentNode deploymentNode, IndentingWriter writer) {
-        List<ContainerInstance> containerInstances = new ArrayList<>(deploymentNode.getContainerInstances());
-        containerInstances.sort(Comparator.comparing(ContainerInstance::getName));
-        for (ContainerInstance containerInstance : containerInstances) {
-            if (view.isElementInView(containerInstance)) {
-                saveContainerInstanceTags(containerInstance);
-            }
-        }
-        writeNetworks(view, writer);
-
-
-        startDeploymentNodeBoundary(view, deploymentNode, writer);
-
-        List<DeploymentNode> children = new ArrayList<>(deploymentNode.getChildren());
-        children.sort(Comparator.comparing(DeploymentNode::getName));
-        for (DeploymentNode child : children) {
-            if (view.isElementInView(child)) {
-                write(view, child, writer);
-
-            }
-        }
-
-        List<InfrastructureNode> infrastructureNodes = new ArrayList<>(deploymentNode.getInfrastructureNodes());
-        infrastructureNodes.sort(Comparator.comparing(InfrastructureNode::getName));
-        for (InfrastructureNode infrastructureNode : infrastructureNodes) {
-            if (view.isElementInView(infrastructureNode)) {
-                writeElement(view, infrastructureNode, writer);
-            }
-        }
-
-        List<SoftwareSystemInstance> softwareSystemInstances = new ArrayList<>(deploymentNode.getSoftwareSystemInstances());
-        softwareSystemInstances.sort(Comparator.comparing(SoftwareSystemInstance::getName));
-        for (SoftwareSystemInstance softwareSystemInstance : softwareSystemInstances) {
-            if (view.isElementInView(softwareSystemInstance)) {
-                writeElement(view, softwareSystemInstance, writer);
-            }
-        }
-
-        for (ContainerInstance containerInstance : containerInstances) {
-            if (view.isElementInView(containerInstance)) {
-                writeElement(view, containerInstance, writer);
+        for (ContainerInstanceDecorator contInstanceDecorator : deploymentNodeDecorator.getContainerInstanceDecorators()) {
+            if (view.isElementInView(contInstanceDecorator.getWrapee())) {
+                writeContainerInstance(view, contInstanceDecorator, writer);
             }
         }
 
         endDeploymentNodeBoundary(view, writer);
+
     }
 
-    protected void writeNetworks(View view, IndentingWriter writer) {
+
+    protected void writeNetworks(List<DeploymentNodeDecorator> depNodesDecorators, IndentingWriter writer) {
+        HashMap<String, ArrayList<String>> tagsList = new HashMap<String, ArrayList<String>>();
+
+
+        for (DeploymentNodeDecorator depNodeDecorator : depNodesDecorators) {
+            for (ContainerInstanceDecorator contInstDecorator:  depNodeDecorator.getContainerInstanceDecorators()) {
+                saveTags(contInstDecorator.getTags(), contInstDecorator.getVarName(), tagsList );
+            }
+        }
         tagsList.remove("Container Instance");
         for (Map.Entry<String, ArrayList<String>> tags: tagsList.entrySet()) {
             writer.writeLine(format("network %s {", tags.getKey()));
@@ -209,16 +172,53 @@ public class NwDiagExporter implements DiagramExporter {
         return new PlantUMLDiagram(view, definition);
     }
 
+    protected List<ContainerInstanceDecorator> createContainerInstanceWrappers(Set<ContainerInstance> containerInstances, HashMap<String, Integer> countContNames) {
+        List<ContainerInstanceDecorator> decorators = new LinkedList<ContainerInstanceDecorator>();
+        for (ContainerInstance contInstance : containerInstances) {
+            String properName = contInstance.getContainer().getCanonicalName().split("//")[1].replaceAll("\\s+", "_");
+            String[] parts =  properName.split("\\.");
+            String varName = checkRepeatedContainers(parts[1], countContNames);
+            String softSysFather = parts[0];
+
+            ContainerInstanceDecorator decorator = new ContainerInstanceDecorator(contInstance, parts[1],varName, softSysFather);
+
+            decorators.add(decorator);
+        }
+
+        return decorators;
+    }
+    protected  List<DeploymentNodeDecorator> createDeploymentNodesWrappers(List<DeploymentNode> deploymentNodes) {
+        HashMap<String, Integer> countContNames = new HashMap<String, Integer>();
+        List<DeploymentNodeDecorator> deploymentNodesDec = new LinkedList<DeploymentNodeDecorator>();
+
+        for (DeploymentNode depNode : deploymentNodes) {
+            List<ContainerInstanceDecorator> contInstancesDecorators = createContainerInstanceWrappers(depNode.getContainerInstances(), countContNames);
+            DeploymentNodeDecorator decorator = new DeploymentNodeDecorator(depNode, contInstancesDecorators);
+            deploymentNodesDec.add(decorator);
+        }
+
+        return  deploymentNodesDec;
+    }
 
     public Diagram export(DeploymentView view, Integer animationStep) {
         this.frame = animationStep;
         IndentingWriter writer = new IndentingWriter();
+        List<DeploymentNode> deploymentNodes = new LinkedList<DeploymentNode>();
+
         writeHeader(view, writer);
 
         for (ElementView elementView : view.getElements()) {
             if (elementView.getElement() instanceof DeploymentNode && elementView.getElement().getParent() == null) {
-                write(view, (DeploymentNode)elementView.getElement(), writer);
+                deploymentNodes.add((DeploymentNode)elementView.getElement());
             }
+        }
+
+        List<DeploymentNodeDecorator> depNodesDecorators = createDeploymentNodesWrappers(deploymentNodes);
+
+        writeNetworks(depNodesDecorators, writer);
+
+        for (DeploymentNodeDecorator depNodeDecorator : depNodesDecorators){
+            write(view, depNodeDecorator, writer);
         }
 
         writeFooter(view, writer);
