@@ -26,4 +26,8 @@ public class DeploymentNodeDecorator {
     public String getName(){
         return this.wrapee.getName();
     }
+
+    public String getInstances() {
+        return this.wrapee.getInstances();
+    }
 }

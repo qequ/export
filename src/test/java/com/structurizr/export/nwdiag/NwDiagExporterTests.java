@@ -49,7 +49,7 @@ public class NwDiagExporterTests extends AbstractExporterTests {
                             "Container_22_1;\n" +
                             "}\n" +
                             "group UnNode {\n" +
-                            "description = \"UnNode\"\n" +
+                            "description = \"UnNode \"\n" +
                             "  Container_11_1[color = \"Red\", description=\"<b>Container_11</b>\"]\n" +
                             "  Container_12_1[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
                             "  Container_21_1[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +
@@ -104,7 +104,7 @@ public class NwDiagExporterTests extends AbstractExporterTests {
                             "Container_22_1;\n" +
                             "}\n" +
                             "group UnNode {\n" +
-                            "description = \"UnNode\"\n" +
+                            "description = \"UnNode \"\n" +
                             "  Container_11_1[color = \"Red\", description=\"<b>Container_11</b>\\n\\nComponent 111\\nComponent 112\\n\"]\n" +
                             "  Container_12_1[color = \"Red\", description=\"<b>Container_12</b>\"]\n" +
                             "  Container_21_1[color = \"Peru\", description=\"<b>Container_21</b>\"]\n" +

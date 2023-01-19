@@ -49,11 +49,16 @@ public class NwDiagExporter implements DiagramExporter {
 
     protected void startDeploymentNodeBoundary(DeploymentView view, DeploymentNodeDecorator deploymentNode, IndentingWriter writer) {
         addContainerComponents = Boolean.parseBoolean(view.getProperties().getOrDefault("nwdiag.include_components", "false"));
+        String instances = deploymentNode.getInstances();
+        StringBuilder formatInstances = new StringBuilder("");
+        if (!instances.equals("1")) {
+            formatInstances.append(format("(%s)", instances));
+        }
 
         writer.writeLine(
                 format("group %s {", deploymentNode.getName())
         );
-        writer.writeLine(format("description = \"%s\"", deploymentNode.getName()));
+        writer.writeLine(format("description = \"%s %s\"", deploymentNode.getName(), formatInstances.toString()));
         writer.indent();
     }
 
