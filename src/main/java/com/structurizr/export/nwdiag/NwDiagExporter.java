@@ -110,8 +110,25 @@ public class NwDiagExporter implements DiagramExporter {
 
     }
 
+    protected void writeDeploymentNodeChildren(View view, DeploymentNodeDecorator decorator, IndentingWriter writer) {
+        List<ContainerInstanceDecorator> containerInstanceDecorators = decorator.getContainerInstanceDecorators();
+        List<String> contInstanceNames = new LinkedList<String>();
+
+        for (ContainerInstanceDecorator contInstanceDecorator : containerInstanceDecorators ) {
+            contInstanceNames.add(contInstanceDecorator.getName());
+        }
+        String depNodeName = decorator.getName();
+        String formatString = format("%s [description=\"<b>%s</b>\n\n%s\"]", depNodeName, depNodeName,String.join("\n", contInstanceNames));
+
+        writer.writeLine(formatString);
+    }
+
     private void write(DeploymentView view, DeploymentNodeDecorator deploymentNodeDecorator, IndentingWriter writer) {
         startDeploymentNodeBoundary(view, deploymentNodeDecorator, writer);
+
+        for (DeploymentNodeDecorator depNodeDecoratorChildren : deploymentNodeDecorator.getDeploymentNodeDecoratorChildren()) {
+            writeDeploymentNodeChildren(view, depNodeDecoratorChildren, writer);
+        }
 
         for (ContainerInstanceDecorator contInstanceDecorator : deploymentNodeDecorator.getContainerInstanceDecorators()) {
             if (view.isElementInView(contInstanceDecorator.getWrapee())) {
@@ -129,11 +146,18 @@ public class NwDiagExporter implements DiagramExporter {
 
 
         for (DeploymentNodeDecorator depNodeDecorator : depNodesDecorators) {
+            for (DeploymentNodeDecorator childrenDecorator : depNodeDecorator.getDeploymentNodeDecoratorChildren()) {
+                saveTags(childrenDecorator.getTags(), childrenDecorator.getName(), tagsList);
+            }
+
             for (ContainerInstanceDecorator contInstDecorator:  depNodeDecorator.getContainerInstanceDecorators()) {
                 saveTags(contInstDecorator.getTags(), contInstDecorator.getVarName(), tagsList );
             }
         }
         tagsList.remove("Container Instance");
+        tagsList.remove("Deployment Node");
+        tagsList.remove("Element");
+
         for (Map.Entry<String, ArrayList<String>> tags: tagsList.entrySet()) {
             writer.writeLine(format("network %s {", tags.getKey()));
 
@@ -192,14 +216,27 @@ public class NwDiagExporter implements DiagramExporter {
 
         return decorators;
     }
+
+    protected DeploymentNodeDecorator createDeploymentNodeWrapper(DeploymentNode deploymentNode, HashMap<String, Integer> countContNames) {
+        List<DeploymentNodeDecorator> childrenDecorator = new LinkedList<DeploymentNodeDecorator>();
+
+        List<DeploymentNode> children = new ArrayList<>(deploymentNode.getChildren());
+        children.sort(Comparator.comparing(DeploymentNode::getName));
+        for (DeploymentNode child : children) {
+            childrenDecorator.add(createDeploymentNodeWrapper(child, countContNames));
+        }
+
+        List<ContainerInstanceDecorator> contInstancesDecorators = createContainerInstanceWrappers(deploymentNode.getContainerInstances(), countContNames);
+
+        return new DeploymentNodeDecorator(deploymentNode, contInstancesDecorators, childrenDecorator);
+    }
+
     protected  List<DeploymentNodeDecorator> createDeploymentNodesWrappers(List<DeploymentNode> deploymentNodes) {
-        HashMap<String, Integer> countContNames = new HashMap<String, Integer>();
         List<DeploymentNodeDecorator> deploymentNodesDec = new LinkedList<DeploymentNodeDecorator>();
+        HashMap<String, Integer> countContNames = new HashMap<String, Integer>(); // to keep containerInstance variable names
 
         for (DeploymentNode depNode : deploymentNodes) {
-            List<ContainerInstanceDecorator> contInstancesDecorators = createContainerInstanceWrappers(depNode.getContainerInstances(), countContNames);
-            DeploymentNodeDecorator decorator = new DeploymentNodeDecorator(depNode, contInstancesDecorators);
-            deploymentNodesDec.add(decorator);
+            deploymentNodesDec.add(createDeploymentNodeWrapper(depNode, countContNames));
         }
 
         return  deploymentNodesDec;
